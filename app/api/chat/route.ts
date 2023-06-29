@@ -34,6 +34,10 @@ export async function POST(req: Request) {
     match_count: 4
   });
 
+  if (error) throw new Error(error.message);
+
+  console.log(data);
+
   //   const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
 
   //   const retriever = vectorstore.asRetriever(5);
