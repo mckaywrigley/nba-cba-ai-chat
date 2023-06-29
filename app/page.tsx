@@ -7,10 +7,16 @@ export default function Home() {
 
   return (
     <div className="mx-auto w-full max-w-md py-24 flex flex-col stretch">
-      <div>
+      <div className="">
         <div className="text-3xl font-bold text-center">NBA Chat AI</div>
         <div>Use AI to ask questions about the new 676-page NBA CBA.</div>
-        <div>Powered by OpenAI</div>
+        <div className="mb-4">Powered by OpenAI</div>
+        <a
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-[40px]"
+          href="https://donate.stripe.com/5kAeWqezzdn6gtWaEF"
+        >
+          DONATE
+        </a>
       </div>
 
       {messages.map((m) => (

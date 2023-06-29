@@ -16,17 +16,20 @@ export async function POST(req: Request) {
 
   const openai = new OpenAIApi(config);
 
-  const client = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PRIVATE_KEY!, { auth: { persistSession: false } });
+  let finalMessages: any = [];
 
-  const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
+  if (messages.length === 1) {
+    const client = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PRIVATE_KEY!, { auth: { persistSession: false } });
 
-  const retriever = vectorstore.asRetriever(4);
+    const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
 
-  const pages = await retriever.getRelevantDocuments(messages[messages.length - 1].content);
+    const retriever = vectorstore.asRetriever(4);
 
-  const systemMessage = {
-    role: "system",
-    content: endent`You are an expert lawyer and an NBA general manager.
+    const pages = await retriever.getRelevantDocuments(messages[messages.length - 1].content);
+
+    const systemMessage = {
+      role: "system",
+      content: endent`You are an expert lawyer and an NBA general manager.
 
     You are studying the new 2023 NBA Collective Bargaining Agreement.
 
@@ -37,11 +40,12 @@ export async function POST(req: Request) {
     You will be given a question about the CBA and you will answer it based on the following pages of the CBA:
 
     ${pages.map((page) => page.pageContent).join("\n\n")}`
-  };
+    };
 
-  console.log(systemMessage);
-
-  const finalMessages = [systemMessage, ...messages];
+    finalMessages = [systemMessage, ...messages];
+  } else {
+    finalMessages = messages;
+  }
 
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
