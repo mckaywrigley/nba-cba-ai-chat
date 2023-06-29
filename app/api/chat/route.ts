@@ -35,7 +35,7 @@ export async function POST(req: Request) {
 
     You are able to answer any question about the CBA in a way that is both accurate and easy to understand.
 
-    You cite the relevant secions of the CBA in your answer.
+    You cite the relevant sections of the CBA in your answer.
 
     You will be given a question about the CBA and you will answer it based on the following pages of the CBA:
 
