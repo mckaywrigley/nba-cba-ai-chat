@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabaseClient } from "@/utils";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import endent from "endent";
 import { Configuration, OpenAIApi } from "openai-edge";
@@ -13,14 +13,6 @@ export async function POST(req: Request) {
   });
 
   const openai = new OpenAIApi(config);
-
-  const privateKey = process.env.SUPABASE_PRIVATE_KEY;
-  if (!privateKey) throw new Error(`Expected env var SUPABASE_PRIVATE_KEY`);
-
-  const url = process.env.SUPABASE_URL;
-  if (!url) throw new Error(`Expected env var SUPABASE_URL`);
-
-  const client = createClient(url, privateKey, { auth: { persistSession: false } });
 
   const res = await fetch("https://api.openai.com/v1/embeddings", {
     headers: {
@@ -37,7 +29,7 @@ export async function POST(req: Request) {
   const json = await res.json();
   const embedding = json.data[0].embedding;
 
-  const { data, error } = await client.rpc("match_documents_nba", {
+  const { data, error } = await supabaseClient.rpc("match_documents_nba", {
     query_embedding: embedding,
     match_count: 4
   });
