@@ -1,8 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import endent from "endent";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 import { Configuration, OpenAIApi } from "openai-edge";
 
 export const runtime = "edge";
@@ -24,15 +22,31 @@ export async function POST(req: Request) {
 
   const client = createClient(url, privateKey, { auth: { persistSession: false } });
 
-  const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
+  const res = await fetch("https://api.openai.com/v1/embeddings", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    method: "POST",
+    body: JSON.stringify({
+      model: "text-embedding-ada-002",
+      input: messages[messages.length - 1].content
+    })
+  });
 
-  console.log(vectorstore.embeddings);
+  const json = await res.json();
+  const embedding = json.data[0].embedding;
 
-  const retriever = vectorstore.asRetriever(5);
+  const { data, error } = await client.rpc("match_documents_nba", {
+    query_embedding: embedding,
+    match_count: 4
+  });
 
-  console.log(retriever);
+  //   const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
 
-  const result = await retriever.getRelevantDocuments("What is the hard cap number?");
+  //   const retriever = vectorstore.asRetriever(5);
+
+  //   const result = await retriever.getRelevantDocuments("What is the hard cap number?");
 
   const systemMessage = {
     role: "system",
@@ -44,8 +58,10 @@ export async function POST(req: Request) {
 
     You will be given a question about the CBA and you will answer it based on the following pages of the CBA:
 
-    ${result.map((document) => document.pageContent).join("\n\n")}`
+    ${data.map((page: any) => page.content).join("\n\n")}`
   };
+
+  console.log(systemMessage);
 
   const finalMessages = [systemMessage, ...messages];
 
