@@ -26,7 +26,11 @@ export async function POST(req: Request) {
 
   const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
 
+  console.log(vectorstore.embeddings);
+
   const retriever = vectorstore.asRetriever(5);
+
+  console.log(retriever);
 
   const result = await retriever.getRelevantDocuments("What is the hard cap number?");
 
