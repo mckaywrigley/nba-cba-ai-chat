@@ -24,15 +24,11 @@ export async function POST(req: Request) {
 
   const client = createClient(url, privateKey);
 
-  console.log("client", client);
-
   const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
 
-  console.log("vectorstore", vectorstore);
+  const retriever = vectorstore.asRetriever(5);
 
-  const result = await vectorstore.similaritySearchWithScore("What is the hard cap number?", 4);
-
-  console.log("result", result);
+  const result = await retriever.getRelevantDocuments("What is the hard cap number?");
 
   const systemMessage = {
     role: "system",
@@ -44,7 +40,7 @@ export async function POST(req: Request) {
 
     You will be given a question about the CBA and you will answer it based on the following pages of the CBA:
 
-    ${result.map((document) => document[0].pageContent).join("\n\n")}`
+    ${result.map((document) => document.pageContent).join("\n\n")}`
   };
 
   const finalMessages = [systemMessage, ...messages];
