@@ -6,7 +6,7 @@ export default function Home() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
 
   return (
-    <div className="mx-auto w-full max-w-xl py-2 sm:py-10 flex flex-col stretch text-neutral-50 px-2">
+    <div className="mx-auto w-full max-w-[600px] py-2 sm:py-10 flex flex-col stretch text-neutral-50 px-2">
       <div className="text-center">
         <div className="text-[60px]">🏀</div>
         <div className="text-4xl font-bold">NBA CBA Chat</div>
@@ -21,7 +21,7 @@ export default function Home() {
       </div>
 
       {messages.length > 0 ? (
-        <div className="flex flex-col mt-5 border-b-2">
+        <div className="flex flex-col mt-5 border-b-2 mb-20">
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-[40px] flex justify-center mb-4"
             onClick={() => window.location.reload()}
