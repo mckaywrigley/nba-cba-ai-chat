@@ -32,6 +32,8 @@ export async function POST(req: Request) {
 
     You are able to answer any question about the CBA in a way that is both accurate and easy to understand.
 
+    You cite the relevant secions of the CBA in your answer.
+
     You will be given a question about the CBA and you will answer it based on the following pages of the CBA:
 
     ${pages.map((page) => page.pageContent).join("\n\n")}`
@@ -43,7 +45,7 @@ export async function POST(req: Request) {
 
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
-    temperature: 0.5,
+    temperature: 0.2,
     stream: true,
     messages: finalMessages
   });
