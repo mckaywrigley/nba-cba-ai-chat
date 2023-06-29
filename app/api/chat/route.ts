@@ -5,16 +5,16 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 import { Configuration, OpenAIApi } from "openai-edge";
 
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
-const openai = new OpenAIApi(config);
-
 export const runtime = "edge";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
+
+  const config = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+
+  const openai = new OpenAIApi(config);
 
   const privateKey = process.env.SUPABASE_PRIVATE_KEY;
   if (!privateKey) throw new Error(`Expected env var SUPABASE_PRIVATE_KEY`);
