@@ -15,12 +15,15 @@ export async function POST(req: Request) {
   });
 
   const openai = new OpenAIApi(config);
+  console.log("openai", process.env.OPENAI_API_KEY);
 
   const privateKey = process.env.SUPABASE_PRIVATE_KEY;
   if (!privateKey) throw new Error(`Expected env var SUPABASE_PRIVATE_KEY`);
+  console.log("privateKey", privateKey);
 
   const url = process.env.SUPABASE_URL;
   if (!url) throw new Error(`Expected env var SUPABASE_URL`);
+  console.log("url", url);
 
   const client = createClient(url, privateKey);
 
