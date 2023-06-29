@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
   const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
 
-  const result = await vectorstore.similaritySearchWithScore("What is the hard cap number?", 10);
+  const result = await vectorstore.similaritySearchWithScore("What is the hard cap number?", 4);
 
   const systemMessage = {
     role: "system",
@@ -44,7 +44,8 @@ export async function POST(req: Request) {
   const finalMessages = [systemMessage, ...messages];
 
   const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo-16k",
+    model: "gpt-3.5-turbo",
+    temperature: 0.5,
     stream: true,
     messages: finalMessages
   });
