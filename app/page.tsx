@@ -13,10 +13,10 @@ export default function Home() {
         <div className="mt-3 text-xl">Use AI to ask questions about the new 676-page NBA CBA.</div>
         <div className="mt-2">Please donate to help us keep the tool online for everyone :)</div>
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded h-[40px] mt-4"
+          className="bg-green-500 hover:bg-green-700 text-white font-bold p-2 rounded h-[40px] mt-4"
           onClick={() => window.open("https://donate.stripe.com/5kAeWqezzdn6gtWaEF")}
         >
-          DONATE
+          DUNK ON LEBRON
         </button>
       </div>
 
