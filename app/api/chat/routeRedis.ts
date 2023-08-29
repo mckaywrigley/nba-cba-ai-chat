@@ -1,7 +1,8 @@
+import { createClient } from "redis";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import endent from "endent";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { QdrantVectorStore } from "langchain/vectorstores/qdrant";
+import { RedisVectorStore } from "langchain/vectorstores/redis";
 import { Configuration, OpenAIApi } from "openai-edge";
 
 export const runtime = "edge";
@@ -18,7 +19,10 @@ export async function POST(req: Request) {
   let finalMessages: any = [];
 
   if (messages.length === 1) {
-    const vectorstore = await QdrantVectorStore.fromExistingCollection(new OpenAIEmbeddings(), { url: process.env.QDRANT_URL, collectionName: "nba",});
+    const client = createClient({url: process.env.REDIS_URL || "redis://localhost:6379"});
+    await client.connect();
+    
+    const vectorstore = await new RedisVectorStore(new OpenAIEmbeddings(),{redisClient: client,indexName: "nba",});
 
     const retriever = vectorstore.asRetriever(4);
 

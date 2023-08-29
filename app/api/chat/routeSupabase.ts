@@ -1,7 +1,8 @@
+import { createClient } from "@supabase/supabase-js";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import endent from "endent";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { QdrantVectorStore } from "langchain/vectorstores/qdrant";
+import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 import { Configuration, OpenAIApi } from "openai-edge";
 
 export const runtime = "edge";
@@ -18,7 +19,9 @@ export async function POST(req: Request) {
   let finalMessages: any = [];
 
   if (messages.length === 1) {
-    const vectorstore = await QdrantVectorStore.fromExistingCollection(new OpenAIEmbeddings(), { url: process.env.QDRANT_URL, collectionName: "nba",});
+    const client = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PRIVATE_KEY!, { auth: { persistSession: false } });
+
+    const vectorstore = await SupabaseVectorStore.fromExistingIndex(new OpenAIEmbeddings(), { client, tableName: "nba", queryName: "match_documents_nba" });
 
     const retriever = vectorstore.asRetriever(4);
 
