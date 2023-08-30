@@ -31,3 +31,5 @@ docker run -d -p 6333:6333 -v qdrant-data:/qdrant/storage --name qdrant-vector-s
 ```bash
 npm run embed-qdrant
 ```
+
+## Prem Support - 🚧 WiP
